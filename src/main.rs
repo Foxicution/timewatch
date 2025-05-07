@@ -111,17 +111,6 @@ fn choose_layout(
     }
 }
 
-fn center(line: &str, width: u16) -> String {
-    let line_len = line.chars().count();
-
-    if (width as usize) <= line_len {
-        line.to_string()
-    } else {
-        let left_pad = (width as usize - line_len) / 2;
-        format!("{left_pad}{line}")
-    }
-}
-
 fn draw(
     seconds: u64,
     message: &Option<String>,
