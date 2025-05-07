@@ -1,6 +1,6 @@
-mod ascii_digits;
+mod ascii_art;
 
-use ascii_digits::DIGITS;
+use ascii_art::DIGITS;
 
 pub fn print_digit(digit: &[&str]) {
     for line in digit {
