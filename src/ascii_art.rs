@@ -97,4 +97,6 @@ pub const COLON: &[&str] = &[
     "     ",
 ];
 
+pub const SYMBOL_DIMENSIONS: (usize, usize) = (5, 5);
+
 pub const DIGITS: &[&[&str]] = &[ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE];
