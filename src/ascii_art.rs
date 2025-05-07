@@ -88,4 +88,13 @@ pub const NINE: &[&str] = &[
     "█████",
 ];
 
+#[rustfmt::skip]
+pub const COLON: &[&str] = &[
+    "     ",
+    "  █  ",
+    "     ",
+    "  █  ",
+    "     ",
+];
+
 pub const DIGITS: &[&[&str]] = &[ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE];
