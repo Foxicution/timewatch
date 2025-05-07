@@ -1,7 +1,13 @@
 [package]
 name = "timewatch"
+description = "A terminal based stopwatch with optional messages"
+authors = ["Foxicution"]
+repository = "https://github.com/Foxicution/timewatch"
+keywords = ["terminal", "stopwatch"]
+categories = ["command-line-utilities", ]
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 clap = { version = "4.5.37", features = ["derive"] }
