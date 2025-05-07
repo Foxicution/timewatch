@@ -16,7 +16,7 @@ A terminal-based countdown timer with adaptive layout.
 # Installation
 
 ```bash
-cargo install --git https://github.com/Foxicution/timewatch
+cargo install timewatch
 ```
 
 # Usage examples
