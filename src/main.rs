@@ -276,13 +276,10 @@ fn draw(
 
 fn main() -> io::Result<()> {
     let args = Args::parse();
-    println!("{args:?}");
-
     let (h, m, s) = parse_time(&args.time).unwrap_or_else(|e| {
         eprintln!("Error: {e}");
         exit(1);
     });
-    println!("{h}:{m}:{s}");
 
     let wait_secs = h * 60 * 60 + m * 60 + s;
     let start_time = Instant::now();
