@@ -1,7 +1,7 @@
 mod ascii_art;
 
 use std::{
-    io::{self, Stdout, Write, stdout},
+    io::{self, stdout, Stdout, Write},
     process::exit,
     time::{Duration, Instant},
 };
@@ -9,12 +9,12 @@ use std::{
 use clap::Parser;
 use crossterm::{
     cursor::{Hide, MoveTo, Show},
-    event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, poll, read},
+    event::{poll, read, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers},
     execute,
     style::{Print, Stylize},
     terminal::{
-        Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode,
-        enable_raw_mode, size,
+        disable_raw_mode, enable_raw_mode, size, Clear, ClearType, EnterAlternateScreen,
+        LeaveAlternateScreen,
     },
 };
 
@@ -64,7 +64,11 @@ fn digits(mut n: u64) -> Vec<u8> {
             break;
         }
     }
-    if i > 18 { buf[18..].to_vec() } else { buf[i..].to_vec() }
+    if i > 18 {
+        buf[18..].to_vec()
+    } else {
+        buf[i..].to_vec()
+    }
 }
 
 fn choose_layout(
@@ -137,7 +141,11 @@ fn draw(
         [0, 0] => vec![],
         digits => (0..SYMBOL_DIMENSIONS.1)
             .map(|line_idx| {
-                digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
+                digits
+                    .iter()
+                    .map(|d| DIGITS[*d as usize][line_idx])
+                    .collect::<Vec<_>>()
+                    .join(" ")
             })
             .collect(),
     };
@@ -145,13 +153,21 @@ fn draw(
         [0, 0] => vec![],
         digits => (0..SYMBOL_DIMENSIONS.1)
             .map(|line_idx| {
-                digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
+                digits
+                    .iter()
+                    .map(|d| DIGITS[*d as usize][line_idx])
+                    .collect::<Vec<_>>()
+                    .join(" ")
             })
             .collect(),
     };
     let s_digits: Vec<String> = (0..SYMBOL_DIMENSIONS.1)
         .map(|line_idx| {
-            s_digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
+            s_digits
+                .iter()
+                .map(|d| DIGITS[*d as usize][line_idx])
+                .collect::<Vec<_>>()
+                .join(" ")
         })
         .collect();
 
@@ -164,11 +180,31 @@ fn draw(
             let top_pad = (term_dim.1 - hl_size.1) / 2;
 
             for line_idx in 0..SYMBOL_DIMENSIONS.1 {
-                let h_line = if !h_digits.is_empty() { h_digits[line_idx].as_str() } else { "" };
-                let c1 = if !h_digits.is_empty() { COLON[line_idx] } else { "" };
-                let m_line = if !m_digits.is_empty() { m_digits[line_idx].as_str() } else { "" };
-                let c2 = if !m_digits.is_empty() { COLON[line_idx] } else { "" };
-                let s_line = if !s_digits.is_empty() { s_digits[line_idx].as_str() } else { "" };
+                let h_line = if !h_digits.is_empty() {
+                    h_digits[line_idx].as_str()
+                } else {
+                    ""
+                };
+                let c1 = if !h_digits.is_empty() {
+                    COLON[line_idx]
+                } else {
+                    ""
+                };
+                let m_line = if !m_digits.is_empty() {
+                    m_digits[line_idx].as_str()
+                } else {
+                    ""
+                };
+                let c2 = if !m_digits.is_empty() {
+                    COLON[line_idx]
+                } else {
+                    ""
+                };
+                let s_line = if !s_digits.is_empty() {
+                    s_digits[line_idx].as_str()
+                } else {
+                    ""
+                };
                 let line = format!("{h_line}{c1}{m_line}{c2}{s_line}");
                 let left_pad = (term_dim.0 - line.chars().count() as u16) / 2;
 
@@ -279,16 +315,34 @@ fn main() -> io::Result<()> {
 
     let mut term_dim = size()?;
     let mut full_redraw = true;
+    let mut pause = false;
+    let mut accumulated_pause = Duration::ZERO;
+    let mut pause_time = Instant::now();
 
     loop {
         if poll(Duration::from_millis(100))? {
             match read()? {
-                Event::Key(KeyEvent { code, modifiers, kind: KeyEventKind::Press, .. }) => {
+                Event::Key(KeyEvent {
+                    code,
+                    modifiers,
+                    kind: KeyEventKind::Press,
+                    ..
+                }) => {
                     if code == KeyCode::Esc
                         || code == KeyCode::Char('q')
                         || (code == KeyCode::Char('c') && modifiers == KeyModifiers::CONTROL)
                     {
                         break;
+                    }
+
+                    // Toggle pause
+                    if code == KeyCode::Char(' ') {
+                        pause = !pause;
+                        if pause {
+                            pause_time = Instant::now(); // Start pause
+                        } else {
+                            accumulated_pause += Instant::now() - pause_time; // Add pause duration
+                        }
                     }
                 }
                 Event::Resize(w, h) => {
@@ -299,13 +353,14 @@ fn main() -> io::Result<()> {
             }
         }
 
-        let elapsed_secs = start_time.elapsed().as_secs();
-        let display_secs = wait_secs.checked_sub(elapsed_secs);
-
-        match display_secs {
-            Some(0) | None => break,
-            Some(secs) => draw(secs, &args.message, &term_dim, full_redraw, &mut stdout)?,
-        };
+        if !pause {
+            let elapsed_secs = (Instant::now() - start_time - accumulated_pause).as_secs();
+            let display_secs = wait_secs.checked_sub(elapsed_secs);
+            match display_secs {
+                Some(0) | None => break,
+                Some(secs) => draw(secs, &args.message, &term_dim, full_redraw, &mut stdout)?,
+            };
+        }
     }
 
     execute!(stdout, Show, LeaveAlternateScreen)?;
