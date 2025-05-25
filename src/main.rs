@@ -141,11 +141,7 @@ fn draw(
         [0, 0] => vec![],
         digits => (0..SYMBOL_DIMENSIONS.1)
             .map(|line_idx| {
-                digits
-                    .iter()
-                    .map(|d| DIGITS[*d as usize][line_idx])
-                    .collect::<Vec<_>>()
-                    .join(" ")
+                digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
             })
             .collect(),
     };
@@ -153,21 +149,13 @@ fn draw(
         [0, 0] => vec![],
         digits => (0..SYMBOL_DIMENSIONS.1)
             .map(|line_idx| {
-                digits
-                    .iter()
-                    .map(|d| DIGITS[*d as usize][line_idx])
-                    .collect::<Vec<_>>()
-                    .join(" ")
+                digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
             })
             .collect(),
     };
     let s_digits: Vec<String> = (0..SYMBOL_DIMENSIONS.1)
         .map(|line_idx| {
-            s_digits
-                .iter()
-                .map(|d| DIGITS[*d as usize][line_idx])
-                .collect::<Vec<_>>()
-                .join(" ")
+            s_digits.iter().map(|d| DIGITS[*d as usize][line_idx]).collect::<Vec<_>>().join(" ")
         })
         .collect();
 
@@ -180,31 +168,11 @@ fn draw(
             let top_pad = (term_dim.1 - hl_size.1) / 2;
 
             for line_idx in 0..SYMBOL_DIMENSIONS.1 {
-                let h_line = if !h_digits.is_empty() {
-                    h_digits[line_idx].as_str()
-                } else {
-                    ""
-                };
-                let c1 = if !h_digits.is_empty() {
-                    COLON[line_idx]
-                } else {
-                    ""
-                };
-                let m_line = if !m_digits.is_empty() {
-                    m_digits[line_idx].as_str()
-                } else {
-                    ""
-                };
-                let c2 = if !m_digits.is_empty() {
-                    COLON[line_idx]
-                } else {
-                    ""
-                };
-                let s_line = if !s_digits.is_empty() {
-                    s_digits[line_idx].as_str()
-                } else {
-                    ""
-                };
+                let h_line = if !h_digits.is_empty() { h_digits[line_idx].as_str() } else { "" };
+                let c1 = if !h_digits.is_empty() { COLON[line_idx] } else { "" };
+                let m_line = if !m_digits.is_empty() { m_digits[line_idx].as_str() } else { "" };
+                let c2 = if !m_digits.is_empty() { COLON[line_idx] } else { "" };
+                let s_line = if !s_digits.is_empty() { s_digits[line_idx].as_str() } else { "" };
                 let line = format!("{h_line}{c1}{m_line}{c2}{s_line}");
                 let left_pad = (term_dim.0 - line.chars().count() as u16) / 2;
 
@@ -322,12 +290,7 @@ fn main() -> io::Result<()> {
     loop {
         if poll(Duration::from_millis(100))? {
             match read()? {
-                Event::Key(KeyEvent {
-                    code,
-                    modifiers,
-                    kind: KeyEventKind::Press,
-                    ..
-                }) => {
+                Event::Key(KeyEvent { code, modifiers, kind: KeyEventKind::Press, .. }) => {
                     if code == KeyCode::Esc
                         || code == KeyCode::Char('q')
                         || (code == KeyCode::Char('c') && modifiers == KeyModifiers::CONTROL)
