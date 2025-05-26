@@ -11,6 +11,7 @@ A terminal-based countdown timer with adaptive layout.
 - Automatically chooses horizontal or vertical layout based on terminal size
 - Adapts to terminal resizes
 - Can exit early with `q`, `ESC` or `Ctrc+C`
+- Can pause the timer using `SPACE`
 - Accepts `hh:mm:ss`, `mm:ss` or just `ss` time format
 
 # Installation
@@ -30,7 +31,8 @@ timewatch 25:00 "Pomodoro Session"
 timewatch 10 && play ding.wav
 ```
 
-Can stop the timewatch anytime using `q`, `ESC` or `Ctrl+C`.
+Can stop the timewatch anytime using `q`, `ESC` or `Ctrl+C`. Can pause it using
+`SPACE`.
 
 # Contributing
 
